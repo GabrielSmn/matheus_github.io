@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Arrecadação - Projeto ABBA Brasil</title>
+    <style>
+        :root{
+            --accent:#2a7a46;
+            --muted:#666;
+            --bg:#f7f7f7;
+            --card:#fff;
+            font-family: Inter, Roboto, system-ui, sans-serif;
+        }
+        body{margin:0;background:var(--bg);color:#111}
+        header{background:linear-gradient(90deg,#0f5132, #2a7a46);color:#fff;padding:20px}
+        .container{max-width:980px;margin:20px auto;padding:16px}
+        h1{margin:0;font-size:1.6rem}
+        p.lead{color:#e6f3ea;margin:8px 0 0}
+        .card{background:var(--card);padding:16px;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.06);margin-top:16px}
+        form.row{display:flex;gap:12px;flex-wrap:wrap}
+        input,textarea,select,button{font:inherit;padding:10px;border-radius:6px;border:1px solid #ddd}
+        input[type="number"]{width:140px}
+        .col{flex:1;min-width:200px}
+        .btn{background:var(--accent);color:#fff;border:none;cursor:pointer}
+        .muted{color:var(--muted);font-size:.9rem}
+        .progress{background:#eee;border-radius:999px;height:16px;overflow:hidden}
+        .progress > span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#1b5f3a);width:0%}
+        nav{display:flex;gap:12px;align-items:center;margin-top:12px}
+        a.link{color:#fff;text-decoration:none;padding:8px 12px;background:rgba(255,255,255,.06);border-radius:6px}
+        /* admin */
+        #admin-panel{display:none}
+        .table{width:100%;border-collapse:collapse;margin-top:12px}
+        .table th, .table td{padding:8px;border-bottom:1px solid #eee;text-align:left;font-size:.95rem}
+        .small{font-size:.85rem;color:var(--muted)}
+        footer{margin:40px 0;text-align:center;color:var(--muted);font-size:.9rem}
+        @media(min-width:900px){ form.row .col.half{flex:0 0 48%} }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1 id="site-title">Projeto de Apoio ABBA Brasil</h1>
+            <p class="lead" id="site-desc">Uma iniciativa da ABBA Brasil para apoiar ações sociais e crescimento da comunidade.</p>
+            <nav>
+                <a class="link" href="#donate">Doar</a>
+                <a class="link" href="#updates" id="link-updates">Atualizações</a>
+                <a class="link" href="#admin" id="link-admin">Área do Administrador</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- resumo financeiro -->
+        <section class="card" aria-labelledby="meta">
+            <h2 id="meta">Meta e Progresso</h2>
+            <p class="muted">Ajude-nos a alcançar a meta para este projeto.</p>
+            <div style="display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap">
+                <div style="flex:1;min-width:200px">
+                    <div class="progress" aria-hidden="true"><span id="progress-bar" style="width:0%"></span></div>
+                    <div style="display:flex;justify-content:space-between;margin-top:6px">
+                        <small class="small">Arrecadado: <strong id="collected">R$0,00</strong></small>
+                        <small class="small">Meta: <strong id="goal">R$5.000,00</strong></small>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn" id="quick-donate-50">Doar R$50</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- formulário de doação -->
+        <section class="card" id="donate" aria-labelledby="doar">
+            <h2 id="doar">Faça sua Doação</h2>
+            <p class="muted">Este é um protótipo: para pagamentos reais, integre com gateways (PagSeguro, MercadoPago, Stripe, etc.).</p>
+            <form id="donation-form" class="row" onsubmit="return false;">
+                <input type="text" id="donor-name" class="col" placeholder="Seu nome (opcional)">
+                <input type="email" id="donor-email" class="col" placeholder="E-mail (opcional)">
+                <input type="number" id="donation-amount" min="1" step="0.5" placeholder="Valor em R$" required>
+                <select id="donation-method" class="col" style="min-width:160px">
+                    <option value="pix">PIX (simulado)</option>
+                    <option value="boleto">Boleto (simulado)</option>
+                    <option value="cartao">Cartão (simulado)</option>
+                </select>
+                <textarea id="donation-message" class="col" rows="2" placeholder="Mensagem (opcional)"></textarea>
+                <div style="display:flex;gap:8px;align-items:center">
+                    <button class="btn" id="donate-btn">Confirmar Doação (Simulado)</button>
+                    <button class="" id="donate-clear" type="button">Limpar</button>
+                </div>
+            </form>
+
+            <div id="recent-donations" style="margin-top:16px">
+                <h3 style="margin:0 0 8px 0">Últimas Doações</h3>
+                <div id="donations-list" class="small">Nenhuma doação registrada ainda.</div>
+            </div>
+        </section>
+
+        <!-- atualizações -->
+        <section class="card" id="updates" aria-labelledby="updates-title">
+            <h2 id="updates-title">Atualizações</h2>
+            <div id="updates-list" class="small">
+                <p>Nenhuma atualização disponível.</p>
+            </div>
+        </section>
+
+        <!-- admin (cliente) -->
+        <section class="card" id="admin-panel" aria-labelledby="admin-title">
+            <h2 id="admin-title">Área do Administrador</h2>
+
+            <div id="admin-login">
+                <p class="small">Faça login como administrador para editar o site e ver doações.</p>
+                <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                    <input id="admin-password" type="password" placeholder="Senha do administrador">
+                    <button class="btn" id="admin-login-btn">Entrar</button>
+                    <button id="admin-logout" style="display:none">Sair</button>
+                </div>
+                <p class="small" style="margin-top:8px">Senha padrão (teste): <strong>admin123</strong></p>
+            </div>
+
+            <div id="admin-area" style="display:none;margin-top:12px">
+                <h3>Configurações do Site</h3>
+                <div style="display:flex;gap:8px;flex-direction:column">
+                    <input id="admin-title-input" placeholder="Título do site">
+                    <textarea id="admin-desc-input" rows="3" placeholder="Descrição do projeto"></textarea>
+                    <input id="admin-goal-input" type="number" min="0" step="0.01" placeholder="Meta em R$">
+                    <div style="display:flex;gap:8px">
+                        <button class="btn" id="admin-save-site">Salvar</button>
+                        <button id="admin-reset">Restaurar padrão</button>
+                        <button id="export-json">Exportar doações (JSON)</button>
+                        <button id="clear-donations">Limpar doações</button>
+                    </div>
+                </div>
+
+                <h3 style="margin-top:12px">Lista de Doações</h3>
+                <table class="table" id="admin-donations-table">
+                    <thead><tr><th>Nome</th><th>Valor</th><th>Mensagem</th><th>Data</th><th>Ações</th></tr></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer>
+            Desenvolvido para ABBA Brasil — protótipo de arrecadação. Para produção, implemente segurança, backend e integração de pagamentos.
+        </footer>
+    </main>
+
+    <script>
+        // Dados salvos em localStorage (protótipo)
+        const STORAGE_KEY = 'abba_arrecadacao_v1';
+        const DEFAULT = {
+            siteTitle: 'Projeto de Apoio ABBA Brasil',
+            siteDesc: 'Uma iniciativa da ABBA Brasil para apoiar ações sociais e crescimento da comunidade.',
+            goal: 5000.00,
+            donations: [], // {id, name, email, amount, method, message, date}
+            updates: []
+        };
+
+        function loadState() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (!raw) return {...DEFAULT};
+                const parsed = JSON.parse(raw);
+                return {...DEFAULT, ...parsed, donations: parsed.donations || []};
+            } catch (e) { return {...DEFAULT}; }
+        }
+        function saveState(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+
+        let state = loadState();
+
+        // util
+        function formatBRL(v){ return 'R$' + Number(v || 0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+        function id(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+
+        // init UI
+        const el = {
+            siteTitle: document.getElementById('site-title'),
+            siteDesc: document.getElementById('site-desc'),
+            goal: document.getElementById('goal'),
+            collected: document.getElementById('collected'),
+            progressBar: document.getElementById('progress-bar'),
+            donationsList: document.getElementById('donations-list'),
+            donationForm: document.getElementById('donation-form'),
+            donationAmount: document.getElementById('donation-amount'),
+            donorName: document.getElementById('donor-name'),
+            donorEmail: document.getElementById('donor-email'),
+            donationMessage: document.getElementById('donation-message'),
+            donateBtn: document.getElementById('donate-btn'),
+            quick50: document.getElementById('quick-donate-50'),
+            adminPanel: document.getElementById('admin-panel'),
+            adminLoginBtn: document.getElementById('admin-login-btn'),
+            adminPassword: document.getElementById('admin-password'),
+            adminArea: document.getElementById('admin-area'),
+            adminLogout: document.getElementById('admin-logout'),
+            adminTitleInput: document.getElementById('admin-title-input'),
+            adminDescInput: document.getElementById('admin-desc-input'),
+            adminGoalInput: document.getElementById('admin-goal-input'),
+            adminSaveSite: document.getElementById('admin-save-site'),
+            adminReset: document.getElementById('admin-reset'),
+            adminDonationsTable: document.querySelector('#admin-donations-table tbody'),
+            exportJson: document.getElementById('export-json'),
+            clearDonations: document.getElementById('clear-donations'),
+            donateClear: document.getElementById('donate-clear'),
+            updatesList: document.getElementById('updates-list')
+        };
+
+        function renderSite() {
+            el.siteTitle.textContent = state.siteTitle;
+            el.siteDesc.textContent = state.siteDesc;
+            el.goal.textContent = formatBRL(state.goal);
+            const total = state.donations.reduce((s,d)=>s+Number(d.amount),0);
+            el.collected.textContent = formatBRL(total);
+            const pct = state.goal > 0 ? Math.min(100, (total / state.goal) * 100) : 0;
+            el.progressBar.style.width = pct + '%';
+
+            // recent donations
+            if (state.donations.length === 0) {
+                el.donationsList.innerHTML = '<p class="small">Nenhuma doação registrada ainda.</p>';
+            } else {
+                const recent = state.donations.slice().sort((a,b)=>b.date - a.date).slice(0,6);
+                el.donationsList.innerHTML = recent.map(d => {
+                    const name = d.name ? `${escapeHtml(d.name)} - ` : '';
+                    const msg = d.message ? `<div class="small" style="color:var(--muted)">${escapeHtml(d.message)}</div>` : '';
+                    return `<div style="margin-bottom:8px"><strong>${name}${formatBRL(d.amount)}</strong> <span class="small">(${new Date(d.date).toLocaleString()})</span>${msg}</div>`;
+                }).join('');
+            }
+
+            // updates
+            if (!state.updates || state.updates.length === 0) {
+                el.updatesList.innerHTML = '<p class="small">Nenhuma atualização disponível.</p>';
+            } else {
+                el.updatesList.innerHTML = state.updates.map(u => `<div style="margin-bottom:8px"><strong>${escapeHtml(u.title)}</strong><div class="small">${escapeHtml(u.body)}</div><div class="small" style="color:var(--muted)">${new Date(u.date).toLocaleString()}</div></div>`).join('');
+            }
+        }
